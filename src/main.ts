@@ -1,7 +1,11 @@
+/* eslint-disable obsidianmd/ui/sentence-case */
 import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
 import MarkdownIt from 'markdown-it';
 import juice from 'juice';
 
+// ==========================================
+// 默认样式：紫色商务风 (仿 MDNice)
+// ==========================================
 const DEFAULT_CSS = `
   /* 全局容器设置 */
   .wechat-content { 
@@ -22,7 +26,7 @@ const DEFAULT_CSS = `
     margin-bottom: 30px; 
   }
 
-  /* H2 标题 */
+  /* H2 标题 (核心复刻：居中、紫色、下划线) */
   h2 { 
     display: block;
     width: 85%;
@@ -67,7 +71,7 @@ const DEFAULT_CSS = `
     margin-bottom: 5px; 
   }
   
-  /* 引用块 */
+  /* 引用块 (复刻：紫色左边框、浅紫背景) */
   blockquote { 
     margin: 20px 0; 
     padding: 15px 20px; 
@@ -82,7 +86,7 @@ const DEFAULT_CSS = `
     margin: 0; 
   }
   
-  /* 加粗文字 */
+  /* 加粗文字 (复刻：底部灰色粗线条) */
   strong { 
     color: rgb(0, 0, 0); 
     font-weight: bold; 
@@ -134,7 +138,7 @@ export default class WechatCopyPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'copy-to-wechat',
-			name: 'Copy to WeChat public account (一键复制到公众号)',
+			name: 'Copy to WeChat',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const markdown = editor.getValue();
 				const currentPath = view.file ? view.file.path : '';
@@ -149,6 +153,7 @@ export default class WechatCopyPlugin extends Plugin {
 		new Notice('正在渲染“紫色商务风”并处理图片...');
 		
 		try {
+			// 1. 预处理：将 Obsidian 的 Wiki Link ![[image.png]] 转换为标准 Markdown
 			const normalizedMarkdown = this.convertWikiLinks(markdown);
 
 			const md = new MarkdownIt({
@@ -157,11 +162,19 @@ export default class WechatCopyPlugin extends Plugin {
 				linkify: true
 			});
 
+			// 2. 渲染成 HTML
 			const html = md.render(normalizedMarkdown);
+
+			// 3. 核心步骤：处理图片转 Base64
 			const htmlWithBase64 = await this.processImagesToBase64(html, currentPath);
+
+			// 4. 拼接 CSS
 			const fullHtml = `<div class="wechat-content"><style>${this.settings.customCSS}</style>${htmlWithBase64}</div>`;
+			
+			// 5. 内联样式 (Juice)
 			const inlinedHtml = juice(fullHtml);
 
+			// 6. 复制
 			await this.copyToClipboard(inlinedHtml, markdown);
 
 			new Notice('✅ 已复制！请直接粘贴到公众号。');
@@ -172,23 +185,31 @@ export default class WechatCopyPlugin extends Plugin {
 		}
 	}
 
+	// 将 ![[image.png]] 转换为 ![](image.png)
 	convertWikiLinks(markdown: string): string {
 		const wikiImageRegex = /!\[\[([^\]]*?)\]\]/g;
 		return markdown.replace(wikiImageRegex, (match: string, content: string) => {
 			let fileName = content;
 			let altText = '';
+			
+			// 处理管道符 | (用于改大小或别名)
 			if (content.includes('|')) {
 				const parts = content.split('|');
-				// 修复点：添加 ?? "" 处理 undefined 情况
 				fileName = parts[0] ?? "";
 				altText = parts.slice(1).join('|');
 			}
+			
+			// 去除首尾空格
 			fileName = fileName.trim();
+			
+			// 关键点：URL 编码，处理文件名中的空格 "Image (1).png" -> "Image%20(1).png"
 			const encodedPath = encodeURI(fileName);
+			
 			return `![${altText}](${encodedPath})`;
 		});
 	}
 
+	// 核心逻辑：解析 HTML，查找 img 标签，将本地路径转为 Base64
 	async processImagesToBase64(html: string, sourcePath: string): Promise<string> {
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
@@ -201,19 +222,26 @@ export default class WechatCopyPlugin extends Plugin {
 			if (!img) continue;
 
 			const src = img.getAttribute('src');
+
 			if (src) {
-				if (src.startsWith('http') || src.startsWith('data:')) continue;
+				// 跳过网络图片和已经是 Base64 的图片
+				if (src.startsWith('http') || src.startsWith('data:')) {
+					continue;
+				}
 
 				const task = async () => {
 					try {
+						// 解码路径 (因为我们在 convertWikiLinks 里编码过)
 						const decodedSrc = decodeURIComponent(src);
+						
+						// 使用 Obsidian API 解析文件路径
 						const file = this.app.metadataCache.getFirstLinkpathDest(decodedSrc, sourcePath);
 						
 						if (file && file instanceof TFile) {
 							const base64 = await this.readImageToBase64(file);
 							img.setAttribute('src', base64);
 						} else {
-							console.warn('未找到图片:', decodedSrc);
+							console.warn('未找到图片文件:', decodedSrc);
 						}
 					} catch (e) {
 						console.error('图片转换失败:', src, e);
@@ -222,6 +250,8 @@ export default class WechatCopyPlugin extends Plugin {
 				promises.push(task());
 			}
 		}
+
+		// 等待所有图片处理完成
 		await Promise.all(promises);
 		return doc.body.innerHTML;
 	}
@@ -229,6 +259,8 @@ export default class WechatCopyPlugin extends Plugin {
 	async readImageToBase64(file: TFile): Promise<string> {
 		const buffer = await this.app.vault.readBinary(file);
 		const arr = new Uint8Array(buffer);
+		
+		// 简单的二进制转 Base64 字符串
 		let binary = '';
 		const len = arr.byteLength;
 		for (let i = 0; i < len; i++) {
@@ -236,12 +268,18 @@ export default class WechatCopyPlugin extends Plugin {
 		}
 		const base64 = window.btoa(binary);
 		
+		// 根据扩展名判断 mime type
 		const ext = file.extension.toLowerCase();
 		const mimeMap: Record<string, string> = {
-			'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg',
-			'gif': 'image/gif', 'webp': 'image/webp', 'svg': 'image/svg+xml'
+			'png': 'image/png',
+			'jpg': 'image/jpeg',
+			'jpeg': 'image/jpeg',
+			'gif': 'image/gif',
+			'webp': 'image/webp',
+			'svg': 'image/svg+xml'
 		};
 		const mime = mimeMap[ext] || 'image/jpeg';
+		
 		return `data:${mime};base64,${base64}`;
 	}
 
@@ -251,6 +289,7 @@ export default class WechatCopyPlugin extends Plugin {
 				"text/html": new Blob([html], { type: "text/html" }), 
 				"text/plain": new Blob([plainText], { type: "text/plain" }) 
 			})];
+
 			await navigator.clipboard.write(data);
 		} else {
             throw new Error("Clipboard API not supported");
@@ -279,24 +318,24 @@ class WechatSettingTab extends PluginSettingTab {
 		containerEl.empty();
 		
 		new Setting(containerEl)
-			.setName('WeChat public account format settings (微信公众号格式设置)')
+			.setName('WeChat formatting')
 			.setHeading();
 
         new Setting(containerEl)
-            .setName('Reset style (重置样式)')
+            .setName('Reset style')
             .setDesc('Click to reset style to default "Purple Business" theme')
             .addButton(button => button
                 .setButtonText('Reset')
                 .onClick(async () => {
                     this.plugin.settings.customCSS = DEFAULT_CSS;
                     await this.plugin.saveSettings();
-                    this.display(); 
+                    this.display(); // 刷新界面
                     new Notice('Style reset!');
                 }));
 
 		new Setting(containerEl)
-			.setName('Custom CSS (自定义 CSS)')
-			.setDesc('Define the converted article style')
+			.setName('Custom CSS')
+			.setDesc('Define the converted article style (CSS)')
 			.addTextArea(text => {
 				text.setPlaceholder('Enter CSS...')
 					.setValue(this.plugin.settings.customCSS)
@@ -304,6 +343,7 @@ class WechatSettingTab extends PluginSettingTab {
 						this.plugin.settings.customCSS = value;
 						await this.plugin.saveSettings();
 					});
+				
 				text.inputEl.rows = 20;
 				text.inputEl.addClass('wechat-plugin-textarea');
 			});
