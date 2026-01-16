@@ -6,3 +6,8 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+/* 插件设置页面的大文本框样式 */
+.wechat-plugin-textarea {
+    width: 100%;
+    font-family: monospace;
+}

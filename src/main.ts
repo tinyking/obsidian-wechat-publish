@@ -2,9 +2,6 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, T
 import MarkdownIt from 'markdown-it';
 import juice from 'juice';
 
-// ==========================================
-// 核心修改：这里替换成了你提供的【紫色商务风】CSS
-// ==========================================
 const DEFAULT_CSS = `
   /* 全局容器设置 */
   .wechat-content { 
@@ -25,7 +22,7 @@ const DEFAULT_CSS = `
     margin-bottom: 30px; 
   }
 
-  /* H2 标题 (核心复刻：居中、紫色、下划线) */
+  /* H2 标题 */
   h2 { 
     display: block;
     width: 85%;
@@ -55,7 +52,7 @@ const DEFAULT_CSS = `
     line-height: 1.8em; 
     letter-spacing: 0.02em; 
     margin: 10px 0; 
-    text-align: justify; /* 两端对齐更整齐 */
+    text-align: justify; 
   }
   
   /* 列表 */
@@ -70,22 +67,22 @@ const DEFAULT_CSS = `
     margin-bottom: 5px; 
   }
   
-  /* 引用块 (复刻：紫色左边框、浅紫背景) */
+  /* 引用块 */
   blockquote { 
     margin: 20px 0; 
     padding: 15px 20px; 
     background-color: rgb(251, 249, 253); 
     border-left: 3px solid rgb(150, 84, 181); 
-    border-right: 1px solid rgb(150, 84, 181); /* 还原你样式中的右边框 */
+    border-right: 1px solid rgb(150, 84, 181); 
     color: rgb(90, 90, 90);
     font-size: 15px;
     border-radius: 4px;
   }
   blockquote p {
-    margin: 0; /* 引用内部段落去间距 */
+    margin: 0; 
   }
   
-  /* 加粗文字 (复刻：底部灰色粗线条) */
+  /* 加粗文字 */
   strong { 
     color: rgb(0, 0, 0); 
     font-weight: bold; 
@@ -137,7 +134,7 @@ export default class WechatCopyPlugin extends Plugin {
 
 		this.addCommand({
 			id: 'copy-to-wechat',
-			name: 'Copy to WeChat Public Account (一键复制到公众号)',
+			name: 'Copy to WeChat public account (一键复制到公众号)',
 			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const markdown = editor.getValue();
 				const currentPath = view.file ? view.file.path : '';
@@ -152,7 +149,6 @@ export default class WechatCopyPlugin extends Plugin {
 		new Notice('正在渲染“紫色商务风”并处理图片...');
 		
 		try {
-			// 1. 预处理：将 Obsidian 的 Wiki Link ![[image.png]] 转换为标准 Markdown
 			const normalizedMarkdown = this.convertWikiLinks(markdown);
 
 			const md = new MarkdownIt({
@@ -161,19 +157,11 @@ export default class WechatCopyPlugin extends Plugin {
 				linkify: true
 			});
 
-			// 2. 渲染成 HTML
-			let html = md.render(normalizedMarkdown);
-
-			// 3. 处理图片 Base64
+			const html = md.render(normalizedMarkdown);
 			const htmlWithBase64 = await this.processImagesToBase64(html, currentPath);
-
-			// 4. 拼接 CSS
 			const fullHtml = `<div class="wechat-content"><style>${this.settings.customCSS}</style>${htmlWithBase64}</div>`;
-			
-			// 5. 内联样式 (Juice)
 			const inlinedHtml = juice(fullHtml);
 
-			// 6. 复制
 			await this.copyToClipboard(inlinedHtml, markdown);
 
 			new Notice('✅ 已复制！请直接粘贴到公众号。');
@@ -184,28 +172,28 @@ export default class WechatCopyPlugin extends Plugin {
 		}
 	}
 
-	// 处理 Obsidian 图片链接 ![[...]]
 	convertWikiLinks(markdown: string): string {
 		const wikiImageRegex = /!\[\[([^\]]*?)\]\]/g;
-		return markdown.replace(wikiImageRegex, (match, content) => {
+		return markdown.replace(wikiImageRegex, (match: string, content: string) => {
 			let fileName = content;
 			let altText = '';
 			if (content.includes('|')) {
 				const parts = content.split('|');
-				fileName = parts[0];
+				// 修复点：添加 ?? "" 处理 undefined 情况
+				fileName = parts[0] ?? "";
 				altText = parts.slice(1).join('|');
 			}
 			fileName = fileName.trim();
-			// 必须编码，否则带空格的文件名会失效
 			const encodedPath = encodeURI(fileName);
 			return `![${altText}](${encodedPath})`;
 		});
 	}
 
 	async processImagesToBase64(html: string, sourcePath: string): Promise<string> {
-		const wrapper = document.createElement('div');
-		wrapper.innerHTML = html;
-		const images = wrapper.getElementsByTagName('img');
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, 'text/html');
+		
+		const images = doc.getElementsByTagName('img');
 		const promises: Promise<void>[] = [];
 
 		for (let i = 0; i < images.length; i++) {
@@ -235,7 +223,7 @@ export default class WechatCopyPlugin extends Plugin {
 			}
 		}
 		await Promise.all(promises);
-		return wrapper.innerHTML;
+		return doc.body.innerHTML;
 	}
 
 	async readImageToBase64(file: TFile): Promise<string> {
@@ -270,11 +258,7 @@ export default class WechatCopyPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		// 如果用户之前修改过 CSS，加载旧的；否则加载新的紫色默认样式
-		// 注意：如果你之前已经运行过插件，Obsidian 会记住你旧的 CSS
-		// 为了强制生效，你可以去设置里点一下“重置”或者手动删掉 data.json，
-        // 或者最简单的方法：在设置页手动把框里的 CSS 清空，然后重启插件，它会加载新的 DEFAULT
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as WechatPluginSettings);
 	}
 
 	async saveSettings() {
@@ -293,34 +277,35 @@ class WechatSettingTab extends PluginSettingTab {
 	display(): void {
 		const {containerEl} = this;
 		containerEl.empty();
-		containerEl.createEl('h2', {text: '微信公众号格式设置'});
+		
+		new Setting(containerEl)
+			.setName('WeChat public account format settings (微信公众号格式设置)')
+			.setHeading();
 
-        // 添加一个重置按钮，方便用户切回默认的紫色主题
         new Setting(containerEl)
-            .setName('重置样式')
-            .setDesc('点击将样式重置为默认的“紫色商务风”')
+            .setName('Reset style (重置样式)')
+            .setDesc('Click to reset style to default "Purple Business" theme')
             .addButton(button => button
-                .setButtonText('重置为默认')
+                .setButtonText('Reset')
                 .onClick(async () => {
                     this.plugin.settings.customCSS = DEFAULT_CSS;
                     await this.plugin.saveSettings();
-                    this.display(); // 刷新界面
-                    new Notice('样式已重置！');
+                    this.display(); 
+                    new Notice('Style reset!');
                 }));
 
 		new Setting(containerEl)
-			.setName('自定义 CSS')
-			.setDesc('定义文章转换后的样式')
+			.setName('Custom CSS (自定义 CSS)')
+			.setDesc('Define the converted article style')
 			.addTextArea(text => {
-				text.setPlaceholder('输入 CSS...')
+				text.setPlaceholder('Enter CSS...')
 					.setValue(this.plugin.settings.customCSS)
 					.onChange(async (value) => {
 						this.plugin.settings.customCSS = value;
 						await this.plugin.saveSettings();
 					});
 				text.inputEl.rows = 20;
-				text.inputEl.style.width = '100%';
-				text.inputEl.style.fontFamily = 'monospace';
+				text.inputEl.addClass('wechat-plugin-textarea');
 			});
 	}
 }
