@@ -1,11 +1,10 @@
 {
-	"id": "wechat-copy-plugin",
-	"name": "wechat-copy-plugin",
+	"id": "obsidian-wechat-publish",
+	"name": "WeChat Public Account Publisher",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "One-click copy markdown to WeChat Official Account with formatting (一键转换 Markdown 为微信公众号格式).",
+	"author": "TinyKing",
+	"authorUrl": "https://github.com/tinyking/obsidian-wechat-publish",
 	"isDesktopOnly": false
 }
