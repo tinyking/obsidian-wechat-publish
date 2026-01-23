@@ -1,90 +1,61 @@
-# Obsidian Sample Plugin
+# WeChat Public Account Publisher | 微信公众号文章发布助手
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+[![Obsidian Plugin](https://img.shields.io/badge/Obsidian-Plugin-9654b5)](https://obsidian.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+**One-click copy Markdown from Obsidian to WeChat Official Account with perfect formatting.** 
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+一键将 Obsidian 里的 Markdown 文章转换并渲染为微信公众号格式，直接粘贴，无忧排版。
 
-## First time developing plugins?
+---
 
-Quick starting guide for new plugin devs:
+![Theme Mockup](assets/mockup.png)
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## ✨ Features | 功能亮点
 
-## Releasing new releases
+- **🚀 One-Click Copy**: Transform your Markdown into professional WeChat articles in a single click. (一键转换，秒出精美排版)
+- **🎨 Business Aesthetics**: Built-in "Purple Business" theme inspired by MDNice. (内置“紫色商务风”主题，专业、大气)
+- **🖼️ Automatic Image Handling**:
+    - Supports **Wiki Links** (`![[image.png]]`) and standard Markdown image links. (支持双向链图片和标准图片语法)
+    - Automatically converts local images to **Base64**, ensuring they appear correctly when pasted. (自动将本地图片转为 Base64，无需手动上传图床)
+- **💅 CSS Customization**: Fully customizable CSS via settings. (支持自定义 CSS 样式，打造你的专属风格)
+- **🧼 Juice Inlining**: Automatically inlines CSS for maximum compatibility with the WeChat editor. (自动启用 Juice 内联样式，确保粘贴后样式不丢失)
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## 🛠️ How to Use | 如何使用
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1.  **Install** the plugin and enable it. (安装并启用插件)
+2.  Open the Markdown file you want to publish. (打开想要发布的 Markdown 文件)
+3.  Open the **Command Palette** (`Ctrl/Cmd + P`) and search for: `WeChat Public Account Publisher: Copy to WeChat`. (打开命令面板，搜索并运行“Copy to WeChat”)
+4.  **Paste** (`Ctrl/Cmd + V`) into the WeChat Official Account editor. (直接在微信公众号后台编辑器粘贴)
 
-## Adding your plugin to the community plugin list
+## ⚙️ Configuration | 配置项目
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+- **Reset Style**: Quickly revert to the default "Purple Business" theme. (一键重置为默认“紫色商务风”主题)
+- **Custom CSS**: Tweak the styles to match your brand identity. (可以在设置面板中直接修改和预览 CSS)
 
-## How to use
+## 📦 Installation | 安装方式
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+### Manual Installation (手动安装)
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [Releases](https://github.com/tinyking/obsidian-wechat-publish/releases) page.
+2. Create a folder named `obsidian-wechat-publish` in your vault's `.obsidian/plugins/` directory.
+3. Move the downloaded files into that folder.
+4. Reload Obsidian and enable the plugin.
 
-## Manually installing the plugin
+---
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+## 👨‍💻 For Developers | 开发指南
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+If you want to build this plugin on your own:
 
-## Funding URL
+1. Clone this repo.
+2. Run `npm install` to install dependencies.
+3. Run `npm run dev` for watch mode or `npm run build` for production build.
 
-You can include funding URLs where people who use your plugin can financially support it.
+### Tech Stack
+- [Typescript](https://www.typescriptlang.org/)
+- [esbuild](https://esbuild.github.io/)
+- [markdown-it](https://github.com/markdown-it/markdown-it)
+- [juice](https://github.com/Automattic/juice)
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://docs.obsidian.md
+## 📄 License | 许可证
+[MIT](LICENSE) © TinyKing
