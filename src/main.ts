@@ -51,12 +51,12 @@ const DEFAULT_CSS = `
   
   /* 段落文字 */
   p { 
-    font-size: 15px; 
-    color: rgb(90, 90, 90); 
-    line-height: 1.8em; 
-    letter-spacing: 0.02em; 
-    margin: 10px 0; 
-    text-align: justify; 
+    text-align: justify;
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(0,0,0,0.9);
+    margin-bottom: 24px;
+    line-height: 2.0;
   }
   
   /* 列表 */
@@ -65,7 +65,7 @@ const DEFAULT_CSS = `
     padding-left: 0;
   }
   li { 
-    font-size: 15px; 
+    font-size: 17px; 
     color: rgb(90, 90, 90); 
     line-height: 1.8em; 
     margin-bottom: 5px; 
@@ -79,18 +79,17 @@ const DEFAULT_CSS = `
     border-left: 3px solid rgb(150, 84, 181); 
     border-right: 1px solid rgb(150, 84, 181); 
     color: rgb(90, 90, 90);
-    font-size: 15px;
+    font-size: 17px;
     border-radius: 4px;
   }
   blockquote p {
     margin: 0; 
   }
   
-  /* 加粗文字 (复刻：底部灰色粗线条) */
+  /* 加粗文字：紫色、无下划线 */
   strong { 
-    color: rgb(0, 0, 0); 
+    color: rgb(119, 48, 152); 
     font-weight: bold; 
-    border-bottom: 3px solid rgba(0, 0, 0, 0.4); 
   }
   
   /* 图片 */
