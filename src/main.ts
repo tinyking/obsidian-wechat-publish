@@ -4,122 +4,151 @@ import MarkdownIt from 'markdown-it';
 import juice from 'juice';
 
 // ==========================================
-// 默认样式：紫色商务风 (仿 MDNice)
+// 默认样式：仿微信公众号爆款文章风格
 // ==========================================
 const DEFAULT_CSS = `
   /* 全局容器设置 */
   .wechat-content { 
-    font-family: Optima, PingFangSC-regular, "PingFang SC", "Microsoft YaHei", sans-serif; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; 
     font-size: 16px; 
-    color: rgb(0, 0, 0); 
-    line-height: 1.6em; 
+    color: #333; 
+    line-height: 1.75; 
     text-align: left; 
-    padding: 0 10px;
+    padding: 20px 15px;
+    max-width: 100%;
   }
   
-  /* H1 标题 */
+  /* H1 标题 - 黑色大号左对齐 */
   h1 { 
-    font-size: 24px; 
-    font-weight: bold; 
-    color: rgb(119, 48, 152); 
-    text-align: center; 
-    margin-bottom: 30px; 
+    font-size: 28px; 
+    font-weight: 700; 
+    color: #1a1a1a; 
+    text-align: left; 
+    margin: 0 0 16px 0;
+    line-height: 1.4;
   }
 
-  /* H2 标题 (核心复刻：居中、紫色、下划线) */
-  h2 { 
-    display: block;
-    width: 85%;
-    margin: 40px auto 20px auto; 
-    padding-bottom: 10px;
-    font-size: 22px; 
-    font-weight: bold; 
-    color: rgb(119, 48, 152); 
-    text-align: center; 
-    border-bottom: 1px solid rgb(119, 48, 152); 
+  /* H2 标题 - 橙色带下划线 */
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e8913c;
+    margin: 32px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8913c;
+    line-height: 1.4;
   }
 
-  /* H3 标题 */
-  h3 { 
-    font-size: 20px; 
-    font-weight: bold; 
-    color: rgb(119, 48, 152); 
-    margin-top: 30px; 
-    margin-bottom: 15px; 
-    display: block;
+  /* H3 标题 - 青色带下划线 */
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2eaadc;
+    margin: 24px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2eaadc;
+    line-height: 1.4;
   }
   
   /* 段落文字 */
   p { 
     text-align: justify;
-    font-size: 17px;
-    font-weight: 300;
-    color: rgba(0,0,0,0.9);
-    margin-bottom: 24px;
-    line-height: 2.0;
+    font-size: 16px;
+    font-weight: 400;
+    color: #333;
+    margin: 0 0 20px 0;
+    line-height: 1.9;
+    text-indent: 0;
   }
   
-  /* 列表 */
-  ul, ol { 
-    margin: 10px 0 10px 20px;
-    padding-left: 0;
-  }
-  li { 
-    font-size: 17px; 
-    color: rgb(90, 90, 90); 
-    line-height: 1.8em; 
-    margin-bottom: 5px; 
-  }
-  
-  /* 引用块 (复刻：紫色左边框、浅紫背景) */
+  /* 引用块 - 橙色/金色副标题风格 */
   blockquote { 
     margin: 20px 0; 
-    padding: 15px 20px; 
-    background-color: rgb(251, 249, 253); 
-    border-left: 3px solid rgb(150, 84, 181); 
-    border-right: 1px solid rgb(150, 84, 181); 
-    color: rgb(90, 90, 90);
-    font-size: 17px;
-    border-radius: 4px;
+    padding: 12px 16px; 
+    background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
+    border-left: 4px solid #e8913c;
+    color: #e8913c;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.7;
   }
 
   /* 引用块中的段落 */
   blockquote p {
-    margin: 0; 
+    margin: 0;
+    color: #e8913c;
+    font-weight: 500;
   }
   
-  /* 加粗文字：紫色、无下划线 */
+  /* 加粗文字 - 紫色强调 */
   strong { 
-    color: rgb(119, 48, 152); 
-    font-weight: bold; 
+    color: #8b5cf6; 
+    font-weight: 600; 
+  }
+  
+  /* 斜体 */
+  em {
+    font-style: italic;
+    color: #666;
+  }
+  
+  /* 链接 */
+  a {
+    color: #2eaadc;
+    text-decoration: none;
+    border-bottom: 1px solid #2eaadc;
+  }
+  
+  /* 列表 */
+  ul, ol { 
+    margin: 16px 0;
+    padding-left: 24px;
+  }
+  li { 
+    font-size: 16px; 
+    color: #333; 
+    line-height: 1.9; 
+    margin-bottom: 8px; 
   }
   
   /* 图片 */
   img { 
     display: block; 
-    margin: 20px auto; 
+    margin: 24px auto; 
     max-width: 100%; 
     height: auto; 
-    border-radius: 4px; 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    border-radius: 8px;
   }
 
   /* 代码块 */
   pre { 
-    background: #f6f8fa; 
-    padding: 15px; 
-    border-radius: 5px; 
+    background: #f8f9fa; 
+    padding: 16px; 
+    border-radius: 6px; 
     overflow-x: auto; 
     font-size: 14px; 
-    font-family: Consolas, monospace;
-    line-height: 1.4;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    line-height: 1.6;
+    margin: 20px 0;
   }
   code {
     background: #f0f0f0;
-    padding: 2px 5px;
+    padding: 2px 6px;
     border-radius: 3px;
-    color: #d14;
-    font-family: Consolas, monospace;
+    font-size: 14px;
+    font-family: "SF Mono", Monaco, Consolas, monospace;
+    color: #d73a49;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+  }
+  
+  /* 水平线 */
+  hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 32px 0;
   }
 `;
 
