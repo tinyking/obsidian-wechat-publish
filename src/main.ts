@@ -73,12 +73,104 @@ const DEFAULT_CSS = `
     line-height: 1.7;
   }
 
-  /* 引用块中的段落 */
-  blockquote p {
-    margin: 0;
-    color: #e8913c;
-    font-weight: 500;
-  }
+	/* 引用块中的段落 */
+	blockquote p {
+	    margin: 0;
+	    color: #e8913c;
+	    font-weight: 500;
+	}
+
+	/* Obsidian Callout（> [!note]） */
+	.wechat-callout {
+	    margin: 20px 0;
+	    border-left: 4px solid #773098;
+	    border-radius: 8px;
+	    overflow: hidden;
+	    background: #faf7fd;
+	}
+	.wechat-callout-title {
+	    padding: 10px 14px;
+	    font-size: 15px;
+	    font-weight: 700;
+	    line-height: 1.6;
+	    color: #5a3382;
+	    background: #f1e7fb;
+	}
+	.wechat-callout-body {
+	    padding: 12px 14px;
+	}
+	.wechat-callout-body p {
+	    margin: 0 0 12px 0;
+	    color: #333;
+	    font-weight: 400;
+	}
+	.wechat-callout-body p:last-child {
+	    margin-bottom: 0;
+	}
+	.wechat-callout-note {
+	    border-left-color: #773098;
+	    background: #faf7fd;
+	}
+	.wechat-callout-note .wechat-callout-title {
+	    color: #5a3382;
+	    background: #f1e7fb;
+	}
+	.wechat-callout-info {
+	    border-left-color: #2eaadc;
+	    background: #f3fbff;
+	}
+	.wechat-callout-info .wechat-callout-title {
+	    color: #1f7599;
+	    background: #dff4fd;
+	}
+	.wechat-callout-tip {
+	    border-left-color: #2f9e44;
+	    background: #f3fcf5;
+	}
+	.wechat-callout-tip .wechat-callout-title {
+	    color: #1f6d2f;
+	    background: #dff5e4;
+	}
+	.wechat-callout-question {
+	    border-left-color: #b7791f;
+	    background: #fffaf2;
+	}
+	.wechat-callout-question .wechat-callout-title {
+	    color: #8a5b17;
+	    background: #fcefd9;
+	}
+	.wechat-callout-warning {
+	    border-left-color: #e8913c;
+	    background: #fff8f0;
+	}
+	.wechat-callout-warning .wechat-callout-title {
+	    color: #b96f22;
+	    background: #fde9d4;
+	}
+	.wechat-callout-danger {
+	    border-left-color: #e03131;
+	    background: #fff5f5;
+	}
+	.wechat-callout-danger .wechat-callout-title {
+	    color: #b42323;
+	    background: #fde3e3;
+	}
+	.wechat-callout-example {
+	    border-left-color: #0ca678;
+	    background: #f2fffb;
+	}
+	.wechat-callout-example .wechat-callout-title {
+	    color: #087f5b;
+	    background: #d9f7ee;
+	}
+	.wechat-callout-quote {
+	    border-left-color: #868e96;
+	    background: #f8f9fa;
+	}
+	.wechat-callout-quote .wechat-callout-title {
+	    color: #495057;
+	    background: #e9ecef;
+	}
   
   /* 加粗文字 - 紫色强调 */
   strong { 
@@ -145,11 +237,104 @@ const DEFAULT_CSS = `
   }
   
   /* 水平线 */
-  hr {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 32px 0;
-  }
+	  hr {
+	    border: none;
+	    border-top: 1px solid #eee;
+	    margin: 32px 0;
+	  }
+`;
+
+const CALLOUT_FALLBACK_CSS = `
+	.wechat-callout {
+	    margin: 20px 0;
+	    border-left: 4px solid #773098;
+	    border-radius: 8px;
+	    overflow: hidden;
+	    background: #faf7fd;
+	}
+	.wechat-callout-title {
+	    padding: 10px 14px;
+	    font-size: 15px;
+	    font-weight: 700;
+	    line-height: 1.6;
+	    color: #5a3382;
+	    background: #f1e7fb;
+	}
+	.wechat-callout-body {
+	    padding: 12px 14px;
+	}
+	.wechat-callout-body p {
+	    margin: 0 0 12px 0;
+	    color: #333;
+	    font-weight: 400;
+	}
+	.wechat-callout-body p:last-child {
+	    margin-bottom: 0;
+	}
+	.wechat-callout-note {
+	    border-left-color: #773098;
+	    background: #faf7fd;
+	}
+	.wechat-callout-note .wechat-callout-title {
+	    color: #5a3382;
+	    background: #f1e7fb;
+	}
+	.wechat-callout-info {
+	    border-left-color: #2eaadc;
+	    background: #f3fbff;
+	}
+	.wechat-callout-info .wechat-callout-title {
+	    color: #1f7599;
+	    background: #dff4fd;
+	}
+	.wechat-callout-tip {
+	    border-left-color: #2f9e44;
+	    background: #f3fcf5;
+	}
+	.wechat-callout-tip .wechat-callout-title {
+	    color: #1f6d2f;
+	    background: #dff5e4;
+	}
+	.wechat-callout-question {
+	    border-left-color: #b7791f;
+	    background: #fffaf2;
+	}
+	.wechat-callout-question .wechat-callout-title {
+	    color: #8a5b17;
+	    background: #fcefd9;
+	}
+	.wechat-callout-warning {
+	    border-left-color: #e8913c;
+	    background: #fff8f0;
+	}
+	.wechat-callout-warning .wechat-callout-title {
+	    color: #b96f22;
+	    background: #fde9d4;
+	}
+	.wechat-callout-danger {
+	    border-left-color: #e03131;
+	    background: #fff5f5;
+	}
+	.wechat-callout-danger .wechat-callout-title {
+	    color: #b42323;
+	    background: #fde3e3;
+	}
+	.wechat-callout-example {
+	    border-left-color: #0ca678;
+	    background: #f2fffb;
+	}
+	.wechat-callout-example .wechat-callout-title {
+	    color: #087f5b;
+	    background: #d9f7ee;
+	}
+	.wechat-callout-quote {
+	    border-left-color: #868e96;
+	    background: #f8f9fa;
+	}
+	.wechat-callout-quote .wechat-callout-title {
+	    color: #495057;
+	    background: #e9ecef;
+	}
 `;
 
 interface WechatPluginSettings {
@@ -192,14 +377,17 @@ export default class WechatCopyPlugin extends Plugin {
 				linkify: true
 			});
 
-			// 2. 渲染成 HTML
-			const html = md.render(normalizedMarkdown);
+				// 2. 渲染成 HTML
+				const html = md.render(normalizedMarkdown);
 
-			// 3. 核心步骤：处理图片转 Base64
-			const htmlWithBase64 = await this.processImagesToBase64(html, currentPath);
+				// 2.1 解析 Obsidian Callout 语法（> [!note]）
+				const htmlWithCallouts = this.transformCallouts(html);
 
-			// 4. 拼接 CSS
-			const fullHtml = `<div class="wechat-content"><style>${this.settings.customCSS}</style>${htmlWithBase64}</div>`;
+				// 3. 核心步骤：处理图片转 Base64
+				const htmlWithBase64 = await this.processImagesToBase64(htmlWithCallouts, currentPath);
+
+			// 4. 拼接 CSS（旧配置没有 callout 样式时自动补齐）
+			const fullHtml = `<div class="wechat-content"><style>${this.getRenderCSS()}</style>${htmlWithBase64}</div>`;
 
 			// 5. 内联样式 (Juice)
 			const inlinedHtml = juice(fullHtml);
@@ -284,6 +472,195 @@ export default class WechatCopyPlugin extends Plugin {
 		// 等待所有图片处理完成
 		await Promise.all(promises);
 		return doc.body.innerHTML;
+	}
+
+	// 解析 Obsidian Callout 语法（例如：> [!warning] 标题）
+	transformCallouts(html: string): string {
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, 'text/html');
+		const blockquotes = Array.from(doc.querySelectorAll('blockquote'));
+		const headerRegex = /^\[!([a-zA-Z0-9_-]+)\]([+-])?\s*(.*)$/;
+
+		for (const blockquote of blockquotes) {
+			const firstParagraph = blockquote.querySelector('p');
+			if (!firstParagraph) continue;
+
+			const firstLineText = this.getFirstLineText(firstParagraph).trim();
+			const match = firstLineText.match(headerRegex);
+			if (!match) continue;
+
+			const rawType = (match[1] ?? 'note').toLowerCase();
+			const customTitle = (match[3] ?? '').trim();
+			const calloutType = this.normalizeCalloutType(rawType);
+			const calloutTitle = customTitle || this.getCalloutDefaultTitle(calloutType);
+
+			const firstBreak = this.getFirstBreakElement(firstParagraph);
+			if (firstBreak) {
+				while (firstParagraph.firstChild && firstParagraph.firstChild !== firstBreak) {
+					firstParagraph.removeChild(firstParagraph.firstChild);
+				}
+				firstParagraph.removeChild(firstBreak);
+			} else {
+				firstParagraph.remove();
+			}
+
+			if (firstParagraph.isConnected && !firstParagraph.textContent?.trim()) {
+				firstParagraph.remove();
+			}
+
+			const theme = this.getCalloutTheme(calloutType);
+			const tableEl = doc.createElement('table');
+			this.setElementStyles(tableEl, {
+				'width': '100%',
+				'margin': '20px 0',
+				'border-collapse': 'collapse',
+				'border-spacing': '0'
+			});
+
+			const tbodyEl = doc.createElement('tbody');
+			const trEl = doc.createElement('tr');
+			const tdEl = doc.createElement('td');
+			this.setElementStyles(tdEl, {
+				'border-left': `4px solid ${theme.borderColor}`,
+				'background': theme.background,
+				'padding': '12px 16px',
+				'border-radius': '8px'
+			});
+
+			const titleEl = doc.createElement('p');
+			this.setElementStyles(titleEl, {
+				'margin': '0 0 10px 0',
+				'color': theme.titleColor,
+				'font-size': '15px',
+				'font-weight': '700',
+				'line-height': '1.6'
+			});
+			titleEl.textContent = calloutTitle;
+			tdEl.appendChild(titleEl);
+
+			const bodyParagraphs = Array.from(blockquote.querySelectorAll('p'));
+			for (const paragraph of bodyParagraphs) {
+				this.setElementStyles(paragraph, {
+					'margin': '0 0 12px 0',
+					'color': '#333',
+					'font-size': '16px',
+					'font-weight': '400',
+					'line-height': '1.9'
+				});
+				tdEl.appendChild(paragraph);
+			}
+
+			const lastBodyParagraph = bodyParagraphs[bodyParagraphs.length - 1];
+			if (lastBodyParagraph) {
+				this.setElementStyles(lastBodyParagraph, { 'margin': '0' });
+			}
+
+			trEl.appendChild(tdEl);
+			tbodyEl.appendChild(trEl);
+			tableEl.appendChild(tbodyEl);
+			blockquote.replaceWith(tableEl);
+		}
+
+		return doc.body.innerHTML;
+	}
+
+	getFirstLineText(paragraph: HTMLParagraphElement): string {
+		let firstLine = '';
+
+		for (const node of Array.from(paragraph.childNodes)) {
+			if (node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === 'BR') {
+				break;
+			}
+			firstLine += node.textContent ?? '';
+		}
+
+		return firstLine;
+	}
+
+	getFirstBreakElement(paragraph: HTMLParagraphElement): HTMLBRElement | null {
+		for (const node of Array.from(paragraph.childNodes)) {
+			if (node.nodeType === Node.ELEMENT_NODE && (node as Element).tagName === 'BR') {
+				return node as HTMLBRElement;
+			}
+		}
+		return null;
+	}
+
+	normalizeCalloutType(rawType: string): string {
+		const typeMap: Record<string, string> = {
+			'note': 'note',
+			'abstract': 'note',
+			'summary': 'note',
+			'tldr': 'note',
+			'info': 'info',
+			'todo': 'info',
+			'tip': 'tip',
+			'hint': 'tip',
+			'important': 'tip',
+			'success': 'tip',
+			'check': 'tip',
+			'done': 'tip',
+			'question': 'question',
+			'help': 'question',
+			'faq': 'question',
+			'warning': 'warning',
+			'caution': 'warning',
+			'attention': 'warning',
+			'failure': 'danger',
+			'fail': 'danger',
+			'missing': 'danger',
+			'danger': 'danger',
+			'error': 'danger',
+			'bug': 'danger',
+			'example': 'example',
+			'quote': 'quote'
+		};
+
+		return typeMap[rawType] ?? 'note';
+	}
+
+	getCalloutDefaultTitle(type: string): string {
+		const titleMap: Record<string, string> = {
+			'note': 'Note',
+			'info': 'Info',
+			'tip': 'Tip',
+			'question': 'Question',
+			'warning': 'Warning',
+			'danger': 'Danger',
+			'example': 'Example',
+			'quote': 'Quote'
+		};
+
+		return titleMap[type] ?? 'Note';
+	}
+
+	getCalloutTheme(type: string): { borderColor: string; background: string; titleColor: string } {
+		const themeMap: Record<string, { borderColor: string; background: string; titleColor: string }> = {
+			'note': { borderColor: '#773098', background: '#faf7fd', titleColor: '#5a3382' },
+			'info': { borderColor: '#2eaadc', background: '#f3fbff', titleColor: '#1f7599' },
+			'tip': { borderColor: '#2f9e44', background: '#f3fcf5', titleColor: '#1f6d2f' },
+			'question': { borderColor: '#b7791f', background: '#fffaf2', titleColor: '#8a5b17' },
+			'warning': { borderColor: '#e8913c', background: '#fff8f0', titleColor: '#b96f22' },
+			'danger': { borderColor: '#e03131', background: '#fff5f5', titleColor: '#b42323' },
+			'example': { borderColor: '#0ca678', background: '#f2fffb', titleColor: '#087f5b' },
+			'quote': { borderColor: '#868e96', background: '#f8f9fa', titleColor: '#495057' }
+		};
+
+		return themeMap[type] ?? themeMap.note!;
+	}
+
+	setElementStyles(element: HTMLElement, styles: Record<string, string>): void {
+		for (const [prop, value] of Object.entries(styles)) {
+			element.style.setProperty(prop, value);
+		}
+	}
+
+	getRenderCSS(): string {
+		const customCSS = this.settings.customCSS ?? '';
+		if (customCSS.includes('.wechat-callout')) {
+			return customCSS;
+		}
+		return `${customCSS}\n${CALLOUT_FALLBACK_CSS}`;
 	}
 
 	async readImageToBase64(file: TFile): Promise<string> {
