@@ -203,6 +203,33 @@ const DEFAULT_CSS = `
     margin-bottom: 8px; 
   }
   
+  /* 定义列表 - 保持在同一行 */
+  dl {
+    margin: 16px 0;
+  }
+  dt {
+    font-size: 16px;
+    color: #333;
+    font-weight: normal;
+    margin-bottom: 8px;
+  }
+  dd {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.9;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    display: inline;
+  }
+  dd::before {
+    content: '';
+    margin-right: 0;
+  }
+  dd::after {
+    content: '';
+    display: block;
+  }
+  
   /* 图片 */
   img { 
     display: block; 

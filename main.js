@@ -239,6 +239,33 @@ var ff=Object.create;var _0=Object.defineProperty;var Af=Object.getOwnPropertyDe
     margin-bottom: 8px; 
   }
   
+  /* \u5B9A\u4E49\u5217\u8868 - \u4FDD\u6301\u5728\u540C\u4E00\u884C */
+  dl {
+    margin: 16px 0;
+  }
+  dt {
+    font-size: 16px;
+    color: #333;
+    font-weight: normal;
+    margin-bottom: 8px;
+  }
+  dd {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.9;
+    margin-left: 8px;
+    margin-bottom: 8px;
+    display: inline;
+  }
+  dd::before {
+    content: '';
+    margin-right: 0;
+  }
+  dd::after {
+    content: '';
+    display: block;
+  }
+  
   /* \u56FE\u7247 */
   img { 
     display: block; 
