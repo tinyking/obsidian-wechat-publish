@@ -201,6 +201,17 @@ const DEFAULT_CSS = `
     color: #333; 
     line-height: 1.9; 
     margin-bottom: 8px; 
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+  li strong,
+  li b,
+  li span[style*="font-weight"] {
+    display: inline;
+  }
+  /* 确保加粗元素后的内容保持在同一行 */
+  li > * {
+    display: inline;
   }
   
   /* 定义列表 - 保持在同一行 */
@@ -400,12 +411,15 @@ export default class WechatCopyPlugin extends Plugin {
 
 			const md = new MarkdownIt({
 				html: true,
-				breaks: true,
+				breaks: false,
 				linkify: true
 			});
 
 				// 2. 渲染成 HTML
-				const html = md.render(normalizedMarkdown);
+				let html = md.render(normalizedMarkdown);
+
+				// 2.0.5 修复：防止加粗文字和冒号被换行分开
+				html = this.preventBreakAfterStrong(html);
 
 				// 2.1 解析 Obsidian Callout 语法（> [!note]）
 				const htmlWithCallouts = this.transformCallouts(html);
@@ -452,6 +466,34 @@ export default class WechatCopyPlugin extends Plugin {
 
 			return `![${altText}](${encodedPath})`;
 		});
+	}
+
+	// 修复：防止加粗文字和冒号被换行分开
+	preventBreakAfterStrong(html: string): string {
+		let result = html;
+		
+		// 针对用户提供的具体情况：</strong> 后面跟着 <section> 或其他标签，标签内有冒号
+		// 在 </strong> 和下一个标签之间插入零宽不换行空格
+		
+		// 1. 处理 </strong> 后面直接跟 < 的情况（标签开始）
+		result = result.replace(/(<\/strong>)(<)/g, '$1\uFEFF$2');
+		
+		// 2. 处理 </b> 后面直接跟 < 的情况
+		result = result.replace(/(<\/b>)(<)/g, '$1\uFEFF$2');
+		
+		// 3. 处理 </span>（加粗）后面直接跟 < 的情况
+		// 先用一个临时标记处理带 font-weight 的 span
+		let tempResult = result;
+		// 匹配带 font-weight 的 span 从开始到结束
+		// 这里采用简化方法：在所有 </span> 后面跟 < 的地方都插入
+		result = result.replace(/(<\/span>)(<)/g, '$1\uFEFF$2');
+		
+		// 4. 同时保留原来的直接跟冒号的处理
+		result = result.replace(/(<\/strong>)(\s*)([：:])/g, '$1\uFEFF$2$3');
+		result = result.replace(/(<\/b>)(\s*)([：:])/g, '$1\uFEFF$2$3');
+		result = result.replace(/(<\/span>)(\s*)([：:])/g, '$1\uFEFF$2$3');
+		
+		return result;
 	}
 
 	// 核心逻辑：解析 HTML，查找 img 标签，将本地路径转为 Base64
